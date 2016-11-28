@@ -31,8 +31,8 @@ public class Main {
         //serveur.Communiquer();
 
         Random rand=new Random();
-        byte[] data = new byte[10];
-        for(int i=0; i<500; i++){
+        byte[] data = new byte[900];
+        for(int i=0; i<80; i++){
             rand.nextBytes(data);
             client1.send(data);
         }

@@ -4,6 +4,7 @@ package UDP;
  * Nicolas Leclaire
  */
 
+import com.sun.org.apache.xerces.internal.impl.dv.util.HexBin;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
@@ -21,17 +22,17 @@ public class DataUdp implements Serializable
      * Stucture à envoyer
      * @param message
      */
-    public DataUdp (String message, int numeroPacket)
+    public DataUdp (byte[] data, int numeroPacket)
     {
-        this.message=message;
+        this.data=data;
         this.num=numeroPacket;
     }
-    public String message;
+    public byte[] data;
     public int num;
     
     @Override
     public String toString(){
-        return "message numéro " + num + " : " + message;
+        return "message numéro " + num + " : " + HexBin.encode(data);
     }
     
     /**

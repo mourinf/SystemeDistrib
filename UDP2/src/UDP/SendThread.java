@@ -39,7 +39,7 @@ public class SendThread implements Runnable{
                 String message = sc.nextLine();
                 
                 // Données à envoyer sérializer
-                DataUdp data = new DataUdp(message, i);
+                DataUdp data = new DataUdp(message.getBytes(), i);
                 byte[] elDatoEnBytes = data.toByteArray();
 
                 // Packet à envoyer

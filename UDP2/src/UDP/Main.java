@@ -5,6 +5,7 @@
  */
 package UDP;
 
+import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Random;
 
@@ -16,17 +17,23 @@ public class Main {
 
     /**
      * @param args the command line arguments
+     * @throws java.net.UnknownHostException
      */
     public static void main(String[] args) throws UnknownHostException {
         // TODO code application logic here
-        ClientUdpWithThread client1 = new ClientUdpWithThread(Constantes.PORT_CLIENT);
+        ClientUdpWithThread client1;
+        client1 = new ClientUdpWithThread(
+                Integer.parseInt(args[0]), InetAddress.getByName(args[1]));
         //ClientUdpWithThread client2= new ClientUdpWithThread(Constantes.PORT_CLIENT2);
         //ServerUdpWithThread serveur= new ServerUdpWithThread();
         client1.Communiquer();
         //client2.Communiquer();
         //serveur.Communiquer();
-        for(int i=0; i<100; i++){
-            client1.send(generate(900));
+        Random rand=new Random();
+        byte[] data = new byte[10];
+        for(int i=0; i<10000; i++){
+            rand.nextBytes(data);
+            client1.send(data);
         }
     }
 

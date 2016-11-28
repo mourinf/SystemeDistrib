@@ -32,7 +32,7 @@ public class LireMessage implements Runnable {
             String message = sc.nextLine();
             try {
                 for(int j=0; j<100; j++){
-                DataUdp data = new DataUdp(message, i+j);
+                DataUdp data = new DataUdp(message.getBytes(), i+j);
                 byte[] bytes = data.toByteArray();
                 client.mem.put(i+j, new DatagramPacket(bytes, bytes.length,
                         InetAddress.getByName(Constantes.HOST_SERVER),

@@ -55,7 +55,7 @@ public class ClientUdp
                 String message = sc.nextLine();
                 
                 // Données à envoyer sérializer
-                DataUdp data = new DataUdp(message, i);
+                DataUdp data = new DataUdp(message.getBytes(), i);
                 byte[] dataBytes = data.toByteArray();
 
                 // Packet à envoyer

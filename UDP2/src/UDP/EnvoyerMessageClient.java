@@ -23,35 +23,50 @@ public class EnvoyerMessageClient extends TimerTask implements Runnable {
     ClientUdpWithThread client;
     DatagramSocket socket;
 
+    /**
+     *
+     * @param client
+     * @param socket
+     */
     public EnvoyerMessageClient(ClientUdpWithThread client, DatagramSocket socket) {
         this.client = client;
         this.socket = socket;
     }
 
+    /**
+     *
+     */
     @Override
     public void run() {
-            // Socket Udp
-                //System.out.println("entree dans boucle d'envoi");
-                //lock.lock();
-                try {
-                    if (!client.mem.isEmpty()) {
-                        // Données à envoyer sérializer
-                        for (DatagramPacket p : client.mem.values()) {
-                            System.out.println("Envoi data : " + DataUdp.fromByteArray(p.getData()).toString());
-                            socket.send(p);
-                            /*    client.memAttente.put(DataUdp.fromByteArray(p.getData()).num, p);
-                            client.mem.remove(p);*/
-                        }
+        // Socket Udp
+        //System.out.println("entree dans boucle d'envoi");
+        //lock.lock();
+        try {
+            this.client.sem.acquire();
+            if (!client.mem.isEmpty()) {
+                // Données à envoyer sérializer
+                int max = 1000;
+                int i = 1;
+                for (DatagramPacket p : client.mem.values()) {
+                    System.out.println("Envoi data : " + DataUdp.fromByteArray(p.getData()).toString());
+                    socket.send(p);
+                    i++;
+                    if (i > max) {
+                        break;
                     }
-                    if (client.arret == true) {
-                                System.exit(0);
-                            }
-                } catch (Exception e) {
-                    System.out.println("Erreur dans boucle d'envoi");
-                } finally {
-                    //lock.unlock();
+                    /*    client.memAttente.put(DataUdp.fromByteArray(p.getData()).num, p);
+                            client.mem.remove(p);*/
                 }
-            /*
+            }
+            if (client.arret == true) {
+                System.exit(0);
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        } finally {
+            this.client.sem.release();
+        }
+        /*
                     DataUdp data = new DataUdp(message, i);
                     byte[] dataBytes = data.toByteArray();
 
@@ -64,6 +79,6 @@ public class EnvoyerMessageClient extends TimerTask implements Runnable {
 
                 System.out.println("Envoi data : " + data.toString());
                 socket.send(p);
-             */
+         */
     }
 }

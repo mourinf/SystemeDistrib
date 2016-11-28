@@ -31,6 +31,7 @@ public class DetecteurFautes extends TimerTask implements Runnable {
             try {
                 client.sem.acquire();
                 client.mem.put(-1, packet);
+                client.socket.send(packet);
             } catch (Exception e) {
 
             } finally {

@@ -5,6 +5,11 @@
  */
 package udp;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 /**
@@ -14,6 +19,9 @@ import java.io.Serializable;
 public class Data implements Serializable{
     private String message;
     private int numS;
+    
+    private static final long serialVersionUID = 3258698714674442547L;
+
 
     public Data(String message, int numS) {
         this.message = message;
@@ -42,4 +50,25 @@ public class Data implements Serializable{
         String s= "message: "+ this.message + " numero: "+ this.numS;
         return s;
     }
+    
+    public byte[] toByteArray() throws IOException{
+        try (ByteArrayOutputStream b = new ByteArrayOutputStream()) {
+            try (ObjectOutputStream o = new ObjectOutputStream(b)) {
+                o.writeObject(this);
+                o.close();
+            }
+            return b.toByteArray();
+        }
+    }
+    
+    public static Data fromByteArray(byte[] bytes) throws IOException, ClassNotFoundException{
+        try (ByteArrayInputStream b = new ByteArrayInputStream(bytes)) {
+            try (ObjectInputStream o = new ObjectInputStream(b)) {
+                Object obj= o.readObject();
+                o.close();
+                return (Data)obj;
+            }
+        }
+    }
+    
 }

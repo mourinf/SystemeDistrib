@@ -23,35 +23,50 @@ public class EnvoyerMessageClient extends TimerTask implements Runnable {
     ClientUdpWithThread client;
     DatagramSocket socket;
 
+    /**
+     *
+     * @param client
+     * @param socket
+     */
     public EnvoyerMessageClient(ClientUdpWithThread client, DatagramSocket socket) {
         this.client = client;
         this.socket = socket;
     }
 
+    /**
+     *
+     */
     @Override
     public void run() {
         // Socket Udp
         //System.out.println("entree dans boucle d'envoi");
         //lock.lock();
         try {
+
+            this.client.sem.acquire();
             if (!client.mem.isEmpty()) {
                 // Données à envoyer sérializer
+                int max = 80;
+                int i = 1;
                 for (DatagramPacket p : client.mem.values()) {
                     System.out.println("Envoi data : " + DataUdp.fromByteArray(p.getData()).toString());
                     socket.send(p);
+                    i++;
+                    if (i > max) {
+                        break;
+                    }
                     /*    client.memAttente.put(DataUdp.fromByteArray(p.getData()).num, p);
                             client.mem.remove(p);*/
                 }
             }
             if (client.arret == true) {
-                client.mem.clear();
                 System.exit(0);
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("Erreur dans boucle d'envoi");
+            System.out.println(e);
         } finally {
-            //lock.unlock();
+            this.client.sem.release();
+
         }
         /*
                     DataUdp data = new DataUdp(message, i);

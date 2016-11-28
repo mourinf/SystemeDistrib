@@ -34,13 +34,19 @@ public class ClientUDP {
 
                 Data data = new Data(message, numS);
 
-                byte buffer[] = serialize(data);
+                byte buffer[] = data.toByteArray();
+                Data de = Data.fromByteArray(buffer);
+                
                 DatagramSocket socket = new DatagramSocket();
                 DatagramPacket donneesEmises = new DatagramPacket(buffer, length, serveur, port);
                 DatagramPacket donneesRecues = new DatagramPacket(new byte[taille], taille);
 
                 socket.setSoTimeout(30000);
                 socket.send(donneesEmises);
+                
+                System.out.println("Message : " + deserialize((byte[])donneesEmises.getData()).toString());
+                System.out.println("de : " + donneesEmises.getAddress() + ":" + donneesEmises.getPort());
+                
                 socket.receive(donneesRecues);
 
                 System.out.println("Message : " + deserialize((byte[])donneesRecues.getData()).toString());

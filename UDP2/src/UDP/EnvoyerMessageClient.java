@@ -30,28 +30,30 @@ public class EnvoyerMessageClient extends TimerTask implements Runnable {
 
     @Override
     public void run() {
-            // Socket Udp
-                //System.out.println("entree dans boucle d'envoi");
-                //lock.lock();
-                try {
-                    if (!client.mem.isEmpty()) {
-                        // Données à envoyer sérializer
-                        for (DatagramPacket p : client.mem.values()) {
-                            System.out.println("Envoi data : " + DataUdp.fromByteArray(p.getData()).toString());
-                            socket.send(p);
-                            /*    client.memAttente.put(DataUdp.fromByteArray(p.getData()).num, p);
+        // Socket Udp
+        //System.out.println("entree dans boucle d'envoi");
+        //lock.lock();
+        try {
+            if (!client.mem.isEmpty()) {
+                // Données à envoyer sérializer
+                for (DatagramPacket p : client.mem.values()) {
+                    System.out.println("Envoi data : " + DataUdp.fromByteArray(p.getData()).toString());
+                    socket.send(p);
+                    /*    client.memAttente.put(DataUdp.fromByteArray(p.getData()).num, p);
                             client.mem.remove(p);*/
-                        }
-                    }
-                    if (client.arret == true) {
-                                System.exit(0);
-                            }
-                } catch (Exception e) {
-                    System.out.println("Erreur dans boucle d'envoi");
-                } finally {
-                    //lock.unlock();
                 }
-            /*
+            }
+            if (client.arret == true) {
+                client.mem.clear();
+                System.exit(0);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Erreur dans boucle d'envoi");
+        } finally {
+            //lock.unlock();
+        }
+        /*
                     DataUdp data = new DataUdp(message, i);
                     byte[] dataBytes = data.toByteArray();
 
@@ -64,6 +66,6 @@ public class EnvoyerMessageClient extends TimerTask implements Runnable {
 
                 System.out.println("Envoi data : " + data.toString());
                 socket.send(p);
-             */
+         */
     }
 }

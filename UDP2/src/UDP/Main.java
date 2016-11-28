@@ -25,7 +25,7 @@ public class Main {
         client1.Communiquer();
         //client2.Communiquer();
         //serveur.Communiquer();
-        for(int i=0; i<100; i++){
+        for(int i=0; i<300; i++){
             client1.send(generate(900));
         }
     }

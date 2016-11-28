@@ -44,13 +44,13 @@ public class RecevoirMessageClient implements Runnable {
                     System.out.println("Suppression du message " + numSeq + " de la mémoire");
                     System.out.println("mem size : " + this.client.mem.size());
                 }
-                if (client.arret==true){
+                if (client.arret == true) {
+                    client.mem.clear();
                     System.exit(0);
                 }
             } catch (Exception e) {
                 //System.out.println("receive timeout");
-            }
-            finally{
+            } finally {
                 //lock.unlock();
             }
         }

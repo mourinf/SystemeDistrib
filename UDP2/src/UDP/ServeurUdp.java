@@ -58,7 +58,7 @@ public class ServeurUdp {
                 // Deserializer le packet
                 DataUdp data = DataUdp.fromByteArray(dataReceived.getData());
                 System.out.println(data.toString());
-                if (!messagesRecus.containsKey(data.num)) {
+                if ((!messagesRecus.containsKey(data.num))&& data.num!=-1) {
                     messagesRecus.put(data.num, data.num); //on rempli la memoire contenant les numero de messages reçus et on ajoute le message à la memoire des messages à délivrer
                     application.traiter(data);
                 }

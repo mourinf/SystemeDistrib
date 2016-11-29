@@ -65,7 +65,7 @@ public class EnvoyerMessageClient extends TimerTask implements Runnable {
             try {
                 if (!memCopy.isEmpty()) {
                     socket.send(p);
-                    Thread.sleep(10);
+                    Thread.sleep(100);
                 }
             } catch (Exception ex) {
             }

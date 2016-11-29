@@ -6,6 +6,7 @@ package UDP;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -15,7 +16,8 @@ import java.util.HashMap;
  */
 public class ServeurUdp {
 
-    HashMap<Integer, Integer> mem;
+    HashMap<Integer,Integer> messagesRecus;
+    Application application;
 
     /**
      * Programme
@@ -23,15 +25,22 @@ public class ServeurUdp {
      * @param args
      */
     public static void main(String[] args) {
-        new ServeurUdp();
+
+        ServeurUdp serveur = new ServeurUdp();
+        serveur.serveurStart();
     }
 
     /**
      * Serveur Udp recevant et acquittant les messages
      */
     public ServeurUdp() {
+        messagesRecus = new HashMap<>();
+        application = new Application(this);
+    }
+
+    public void serveurStart() {
+        DataUdp ack;
         try {
-            int attente=1;
             // Socket
             DatagramSocket socket = new DatagramSocket(
                     Constantes.PORT_SERVER, InetAddress
@@ -40,9 +49,8 @@ public class ServeurUdp {
             // Packet de reception
             DatagramPacket dataReceived = new DatagramPacket(new byte[1024], 1024);
 
-            // Bucle infinito.
             while (true) {
-                // Recvoir un packet
+                // Recevoir un packet
                 socket.receive(dataReceived);
                 System.out.print("Reçu data de "
                         + dataReceived.getAddress().getHostName() + " : ");
@@ -50,18 +58,16 @@ public class ServeurUdp {
                 // Deserializer le packet
                 DataUdp data = DataUdp.fromByteArray(dataReceived.getData());
                 System.out.println(data.toString());
-                if ( data.num==attente || data.num == -1) {
-
-                    DatagramPacket dataSend = new DatagramPacket(dataReceived.getData(),
-                            dataReceived.getLength(), dataReceived.getAddress(), dataReceived.getPort());
-
-                    socket.send(dataSend);
-                    System.out.println("renvoi");
-                    if(data.num!=-1)
-                        attente++;
-                } else {
-                    //  System.out.println("Deja reçu!");
+                if (!messagesRecus.containsKey(data.num)) {
+                    messagesRecus.put(data.num, data.num); //on rempli la memoire contenant les numero de messages reçus et on ajoute le message à la memoire des messages à délivrer
+                    application.traiter(data);
                 }
+                //acquittement
+                ack=new DataUdp("ACK".getBytes(), data.num );
+                DatagramPacket dataSend = new DatagramPacket(ack.toByteArray(),
+                        ack.toByteArray().length, dataReceived.getAddress(), dataReceived.getPort());
+                socket.send(dataSend);
+                System.out.println("renvoi");
 
             }
         } catch (Exception e) {

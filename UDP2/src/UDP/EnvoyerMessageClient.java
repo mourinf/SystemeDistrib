@@ -63,8 +63,10 @@ public class EnvoyerMessageClient extends TimerTask implements Runnable {
         for (DatagramPacket p : memCopy.values()) {
             System.out.println("Envoi data : " + DataUdp.fromByteArray(p.getData()).toString());
             try {
-                socket.send(p);
-                Thread.sleep(10);
+                if (!memCopy.isEmpty()) {
+                    socket.send(p);
+                    Thread.sleep(10);
+                }
             } catch (Exception ex) {
             }
         }

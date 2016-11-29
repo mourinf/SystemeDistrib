@@ -77,7 +77,7 @@ public class ClientUdpWithThread {
         Thread reception = new Thread(new RecevoirMessageClient(this, this.socket), "Reception");
         //Thread lecture = new Thread(new LireMessage(this));
         timerEnvoi.schedule(new EnvoyerMessageClient(this, this.socket), 0, 300);
-        //timerDetect.schedule(new DetecteurFautes(this), 0, 10000);
+        timerDetect.schedule(new DetecteurFautes(this), 0, 10000);
         //lecture.start();
         reception.start();
     }

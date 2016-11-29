@@ -43,7 +43,7 @@ public class RecevoirMessageClient implements Runnable {
             try {
                 socket.receive(dataReceived);
                 numSeq = DataUdp.fromByteArray(dataReceived.getData()).num;
-                System.out.println("Reception data : " + DataUdp.fromByteArray(dataReceived.getData()).toString());
+                System.out.println("Reception acquittement message numéro : " + DataUdp.fromByteArray(dataReceived.getData()).num);
                 if (client.mem.containsKey(numSeq)) {
                     System.out.println("mem size : " + this.client.mem.size());
 

@@ -3,6 +3,9 @@ package UDP.client;
 import UDP.Constantes;
 import UDP.DataUdp;
 import com.sun.corba.se.impl.orbutil.concurrent.Mutex;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -28,6 +31,7 @@ import java.util.logging.Logger;
 public class ClientUdpWithThread {
 
     HashMap<Integer, DatagramPacket> mem;
+    File f = new File("messagesEnvoyes.txt");
     DatagramSocket socket;
     public boolean arret = false;
     boolean activeDetect = true;
@@ -49,7 +53,7 @@ public class ClientUdpWithThread {
         this.latence = 0;
         try {
             this.socket = new DatagramSocket(
-                    Constantes.PORT_CLIENT, 
+                    Constantes.PORT_CLIENT,
                     InetAddress.getByName(Constantes.HOST_CLIENT));
         } catch (Exception e) {
             e.printStackTrace();
@@ -69,6 +73,13 @@ public class ClientUdpWithThread {
         DataUdp data = new DataUdp(bytes, num);
         byte[] buffer = data.toByteArray();
         try {
+
+            FileWriter fw = new FileWriter(f, true);
+            fw.write(String.valueOf(data.toString()));
+            fw.write("\r\n");
+
+            fw.close();
+
             this.sem.acquire();
             mem.put(num, new DatagramPacket(buffer, buffer.length,
                     InetAddress.getByName(Constantes.HOST_SERVER),

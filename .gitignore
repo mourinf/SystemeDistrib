@@ -17,3 +17,4 @@ hs_err_pid*
 =======
 /UDP2/dist/
 */build/*
+/UDP2/nbproject/private/

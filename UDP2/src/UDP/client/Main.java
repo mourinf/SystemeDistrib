@@ -6,6 +6,9 @@
 package UDP.client;
 
 import UDP.client.ClientUdpWithThread;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Random;
@@ -26,12 +29,15 @@ public class Main {
         ClientUdpWithThread client1;
         client1 = new ClientUdpWithThread(nb);
 
-        Random rand=new Random();
+        Random rand = new Random();
         byte[] data = new byte[taille];
-        for(int i=0; i<nb; i++){
+
+        for (int i = 0; i < nb; i++) {
             rand.nextBytes(data);
             client1.send(data);
+
         }
+
         client1.latence = System.currentTimeMillis();
         client1.Communiquer();
     }

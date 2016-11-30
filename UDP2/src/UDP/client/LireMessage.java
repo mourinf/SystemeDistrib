@@ -3,8 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package UDP;
+package UDP.client;
 
+import UDP.Constantes;
+import UDP.DataUdp;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.util.Scanner;
@@ -43,7 +45,6 @@ public class LireMessage implements Runnable {
                 if (client.arret==true){
                     System.exit(0);
                 }
-                //Thread.yield();
             } catch (Exception e) {
                 e.printStackTrace();
             }

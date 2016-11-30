@@ -1,8 +1,10 @@
-package UDP;
+package UDP.serveur;
 
 /**
  * Nicolas Leclaire
  */
+import UDP.Constantes;
+import UDP.DataUdp;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -47,7 +49,8 @@ public class ServeurUdp {
                             .getByName("localhost"));
 
             // Packet de reception
-            DatagramPacket dataReceived = new DatagramPacket(new byte[1024], 1024);
+            DatagramPacket dataReceived = new DatagramPacket(new byte[10000],
+                    10000);
 
             while (true) {
                 // Recevoir un packet
@@ -65,7 +68,8 @@ public class ServeurUdp {
                 //acquittement
                 ack=new DataUdp("ACK".getBytes(), data.num );
                 DatagramPacket dataSend = new DatagramPacket(ack.toByteArray(),
-                        ack.toByteArray().length, dataReceived.getAddress(), dataReceived.getPort());
+                        ack.toByteArray().length, dataReceived.getAddress(),
+                        dataReceived.getPort());
                 socket.send(dataSend);
                 System.out.println("renvoi");
 

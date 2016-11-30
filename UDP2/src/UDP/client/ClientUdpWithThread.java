@@ -1,5 +1,7 @@
-package UDP;
+package UDP.client;
 
+import UDP.Constantes;
+import UDP.DataUdp;
 import com.sun.corba.se.impl.orbutil.concurrent.Mutex;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -27,58 +29,39 @@ public class ClientUdpWithThread {
 
     HashMap<Integer, DatagramPacket> mem;
     DatagramSocket socket;
-    public InetAddress address;
-    public int port;
     public boolean arret = false;
+    boolean activeDetect = true;
     Timer timerEnvoi;
     Timer timerDetect;
     int num;
-    //InetAddress address;
     Semaphore sem;
+    long latence;
+    long nbMessage;
+    boolean first = true;
 
-    public static void main(String args[]) throws UnknownHostException {
-        ClientUdpWithThread client;
-        client = new ClientUdpWithThread(
-                Integer.parseInt(args[0]), InetAddress.getByName(args[1]));
-        client.Communiquer();
-    }
-
-    public ClientUdpWithThread() {
+    public ClientUdpWithThread(long nb) {
         this.mem = new HashMap<>();
+        this.nbMessage = nb;
         this.timerDetect = new Timer("Detect");
         this.timerEnvoi = new Timer("Envoi");
-        this.num = 1;
-        try {
-            this.socket = new DatagramSocket(
-                    Constantes.PORT_CLIENT, InetAddress
-                    .getByName("localhost"));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public ClientUdpWithThread(int port, InetAddress address) {
-        this.mem = new HashMap<>();
-        this.timerDetect = new Timer("Detect");
-        this.timerEnvoi = new Timer("Envoi");
-        this.port = port;
         this.num = 1;
         this.sem = new Semaphore(1);
-        //this.verrou = new ReentrantLock();
+        this.latence = 0;
         try {
             this.socket = new DatagramSocket(
-                    port, address);
+                    Constantes.PORT_CLIENT, 
+                    InetAddress.getByName(Constantes.HOST_CLIENT));
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     void Communiquer() {
-        Thread reception = new Thread(new RecevoirMessageClient(this, this.socket), "Reception");
-        //Thread lecture = new Thread(new LireMessage(this));
-        timerEnvoi.schedule(new EnvoyerMessageClient(this, this.socket), 0, 300);
+        Thread reception = new Thread(new RecevoirMessageClient(this,
+                this.socket), "Reception");
+        timerEnvoi.schedule(new EnvoyerMessageClient(this, this.socket),
+                0, 300);
         timerDetect.schedule(new DetecteurFautes(this), 0, 10000);
-        //lecture.start();
         reception.start();
     }
 
@@ -87,9 +70,11 @@ public class ClientUdpWithThread {
         byte[] buffer = data.toByteArray();
         try {
             this.sem.acquire();
-            mem.put(num, new DatagramPacket(buffer, buffer.length, InetAddress.getByName(Constantes.HOST_SERVER), Constantes.PORT_SERVER));
+            mem.put(num, new DatagramPacket(buffer, buffer.length,
+                    InetAddress.getByName(Constantes.HOST_SERVER),
+                    Constantes.PORT_SERVER));
         } catch (Exception e) {
-            
+            e.printStackTrace();
         } finally {
             this.sem.release();
         }

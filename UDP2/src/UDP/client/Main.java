@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package UDP;
+package UDP.client;
 
+import UDP.client.ClientUdpWithThread;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Random;
@@ -20,22 +21,19 @@ public class Main {
      * @throws java.net.UnknownHostException
      */
     public static void main(String[] args) throws UnknownHostException {
-        // TODO code application logic here
+        long nb = Integer.parseInt(args[0]);
+        int taille = Integer.parseInt(args[1]);
         ClientUdpWithThread client1;
-        client1 = new ClientUdpWithThread(
-                Integer.parseInt(args[0]), InetAddress.getByName(args[1]));
-        //ClientUdpWithThread client2= new ClientUdpWithThread(Constantes.PORT_CLIENT2);
-        //ServerUdpWithThread serveur= new ServerUdpWithThread();
-        client1.Communiquer();
-        //client2.Communiquer();
-        //serveur.Communiquer();
+        client1 = new ClientUdpWithThread(nb);
 
         Random rand=new Random();
-        byte[] data = new byte[900];
-        for(int i=0; i<80; i++){
+        byte[] data = new byte[taille];
+        for(int i=0; i<nb; i++){
             rand.nextBytes(data);
             client1.send(data);
         }
+        client1.latence = System.currentTimeMillis();
+        client1.Communiquer();
     }
 
     public static String generate(int length) {

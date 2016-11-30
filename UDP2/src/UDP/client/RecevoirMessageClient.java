@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package UDP;
+package UDP.client;
 
+import UDP.DataUdp;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -23,7 +24,8 @@ public class RecevoirMessageClient implements Runnable {
     ClientUdpWithThread client;
     DatagramSocket socket;
 
-    public RecevoirMessageClient(ClientUdpWithThread client, DatagramSocket socket) {
+    public RecevoirMessageClient(ClientUdpWithThread client,
+            DatagramSocket socket) {
         this.client = client;
         this.socket = socket;
     }
@@ -33,17 +35,20 @@ public class RecevoirMessageClient implements Runnable {
         int numSeq;
 
         // packet à réceptioner
-        DatagramPacket dataReceived = new DatagramPacket(new byte[1024], 1024);
+        DatagramPacket dataReceived = new DatagramPacket(new byte[10000],
+                10000);
         try {
-            socket.setSoTimeout(10000);
+            socket.setSoTimeout(1000);
         } catch (SocketException ex) {
 
         }
         while (true) {
             try {
                 socket.receive(dataReceived);
+                client.activeDetect = false;
                 numSeq = DataUdp.fromByteArray(dataReceived.getData()).num;
-                System.out.println("Reception acquittement message numéro : " + DataUdp.fromByteArray(dataReceived.getData()).num);
+                System.out.println("Reception acquittement message numéro : " +
+                       DataUdp.fromByteArray(dataReceived.getData()).num);
                 if (client.mem.containsKey(numSeq)) {
                     System.out.println("mem size : " + this.client.mem.size());
 
@@ -51,8 +56,10 @@ public class RecevoirMessageClient implements Runnable {
                         this.client.sem.acquire();
                         this.client.mem.remove(numSeq);
 
-                        System.out.println("Suppression du message " + numSeq + " de la mémoire");
-                        System.out.println("mem size : " + this.client.mem.size());
+                        System.out.println("Suppression du message " + numSeq +
+                               " de la mémoire");
+                        System.out.println("mem size : " + 
+                               this.client.mem.size());
                     } catch (Exception e) {
 
                     } finally {
@@ -60,11 +67,10 @@ public class RecevoirMessageClient implements Runnable {
                     }
                 }
                 if (client.arret == true) {
-
                     System.exit(0);
                 }
             } catch (Exception e) {
-                System.out.println(e);
+                client.activeDetect = true;
             } finally {
             }
         }

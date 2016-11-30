@@ -3,8 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package UDP;
+package UDP.client;
 
+import UDP.Constantes;
+import UDP.DataUdp;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.util.Timer;
@@ -24,20 +26,22 @@ public class DetecteurFautes extends TimerTask implements Runnable {
 
     @Override
     public void run() {
+        if (client.activeDetect == false){
+            return;
+        }
         DataUdp checkMessage = new DataUdp("try".getBytes(), -1);
         byte[] bytes = checkMessage.toByteArray();
         try {
-            DatagramPacket packet = new DatagramPacket(bytes, bytes.length, InetAddress.getByName(Constantes.HOST_SERVER), Constantes.PORT_SERVER);
+            DatagramPacket packet = new DatagramPacket(bytes, bytes.length, 
+                    InetAddress.getByName(Constantes.HOST_SERVER),
+                    Constantes.PORT_SERVER);
             try {
                 client.sem.acquire();
                 client.mem.put(-1, packet);
                 client.socket.send(packet);
-            } catch (Exception e) {
-
             } finally {
                 client.sem.release();
             }
-            //client.socket.send(packet);
             Thread.sleep(5000);
             try {
                 this.client.sem.acquire();
